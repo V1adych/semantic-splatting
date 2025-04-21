@@ -1,0 +1,6 @@
+[submodule "LangSplat"]
+	path = LangSplat
+	url = git@github.com:minghanqin/LangSplat.git
+[submodule "nerfstudio"]
+	path = nerfstudio
+	url = https://github.com/nerfstudio-project/nerfstudio.git
