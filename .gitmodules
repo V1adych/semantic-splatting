@@ -7,3 +7,6 @@
 [submodule "gaussian-splatting"]
 	path = gaussian-splatting
 	url = https://github.com/graphdeco-inria/gaussian-splatting.git
+[submodule "Talk2DINO"]
+	path = Talk2DINO
+	url = https://github.com/lorebianchi98/Talk2DINO.git
