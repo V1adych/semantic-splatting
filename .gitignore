@@ -1,1 +1,6 @@
 data/
+data_dimasika/
+SIBR/
+*.zip
+*.deb
+*.out
