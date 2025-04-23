@@ -4,3 +4,8 @@ SIBR/
 *.zip
 *.deb
 *.out
+*.pt
+*.pth
+__pycache__
+lerf_ovs
+ckpts
