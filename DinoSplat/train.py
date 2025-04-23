@@ -128,15 +128,15 @@ def training(
 
         # Loss
         if opt.include_feature:
-            gt_language_feature, language_feature_mask = (
-                viewpoint_cam.get_language_feature(
-                    language_feature_dir=dataset.lf_path,
-                    feature_level=dataset.feature_level,
-                )
-            )
+            # gt_language_feature = viewpoint_cam.get_language_feature(
+            #     language_feature_dir=dataset.lf_path,
+            #     feature_level=dataset.feature_level,
+            # )
+    
+            gt_language_feature = viewpoint_cam.get_dino_feature(dataset.source_path)
             Ll1 = l1_loss(
-                language_feature * language_feature_mask,
-                gt_language_feature * language_feature_mask,
+                language_feature,
+                gt_language_feature,
             )
             loss = Ll1
         else:
@@ -333,7 +333,7 @@ if __name__ == "__main__":
     op = OptimizationParams(parser)
     pp = PipelineParams(parser)
     parser.add_argument("--ip", type=str, default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=55555)
+    parser.add_argument("--port", type=int, default=43024)
     parser.add_argument("--debug_from", type=int, default=-1)
     parser.add_argument("--detect_anomaly", action="store_true", default=False)
     parser.add_argument(

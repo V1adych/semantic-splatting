@@ -14,12 +14,11 @@ from scene import Scene
 import os
 from tqdm import tqdm
 from os import makedirs
-from gaussian_renderer import render
+from gaussian_renderer import render, GaussianModel
 import torchvision
 from utils.general_utils import safe_state
 from argparse import ArgumentParser
 from arguments import ModelParams, PipelineParams, get_combined_args
-from gaussian_renderer import GaussianModel
 
 
 def render_set(
@@ -57,9 +56,12 @@ def render_set(
             gt = view.original_image[0:3, :, :]
 
         else:
-            gt, mask = view.get_language_feature(
-                os.path.join(source_path, args.language_features_name),
-                feature_level=args.feature_level,
+            # gt = view.get_language_feature(
+            #     os.path.join(source_path, args.language_features_name),
+            #     feature_level=args.feature_level,
+            # )
+            gt = view.get_dino_feature(
+                source_path
             )
 
         np.save(
