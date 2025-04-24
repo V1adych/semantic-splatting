@@ -95,10 +95,10 @@ class Camera(nn.Module):
     
     def get_talk2dino_feature(self, language_feature_dir):
         features_dir = Path(language_feature_dir) / "talk2dino_features"
-        features_path = features_dir / f"{self.image_name}.npz"
-        with open(features_path, "rb") as f:
-            feature_map = np.load(f)["arr_0"]
-
+        features_path = features_dir / f"{self.image_name}.npy"
+        # with open(features_path, "rb") as f:
+        #     feature_map = np.load(f)["arr_0"]
+        feature_map = np.load(features_path)
         return torch.tensor(feature_map).cuda().permute(2, 0, 1)
 
 

@@ -27,11 +27,13 @@ from models import build_model
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 cfg_file_path = "src/open_vocabulary_segmentation/configs/cityscapes/dinotext_cityscapes_vitb_mlp_infonce.yml"
-objects = ["table", "bowl", "ramen", "glass", "bottle", "sticks", "chair"]
+# objects = ["table", "bowl", "ramen", "glass", "bottle", "sticks", "chair"]
+objects = ["table", "bowl of ramen", "bottle"]
 
 cmap = plt.get_cmap("hsv")
 
-palette = cmap(np.linspace(0, 1, len(objects) + 1)[:-1])[:, :3]
+# palette = cmap(np.linspace(0, 1, len(objects) + 1)[:-1])[:, :3]
+palette = np.array([[0, 1, 0], [1, 0, 0], [0, 0, 1]])
 
 
 @torch.no_grad()
@@ -47,7 +49,8 @@ def create(model, image_list, data_list, save_folder, text_emb, text):
 
         img_emb = palette[result] * 2 - 1
 
-        np.savez_compressed(save_dir / Path(file_path).stem, img_emb)
+        # np.savez_compressed(save_dir / Path(file_path).stem, img_emb)
+        np.save(save_dir / Path(file_path).stem, img_emb)
 
 
 def seed_everything(seed_value):
