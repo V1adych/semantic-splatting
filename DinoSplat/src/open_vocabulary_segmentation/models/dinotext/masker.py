@@ -14,7 +14,6 @@ from models.builder import MODELS
 from models.dinotext.gumbel import gumbel_sigmoid
 from models.dinotext.modules import FeatureEncoder
 
-from utils import get_logger
 import us
 
 import logging
