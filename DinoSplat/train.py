@@ -133,7 +133,8 @@ def training(
             #     feature_level=dataset.feature_level,
             # )
     
-            gt_language_feature = viewpoint_cam.get_dino_feature(dataset.source_path)
+            # gt_language_feature = viewpoint_cam.get_dino_feature(dataset.source_path)
+            gt_language_feature = viewpoint_cam.get_talk2dino_feature(dataset.source_path)
             Ll1 = l1_loss(
                 language_feature,
                 gt_language_feature,
