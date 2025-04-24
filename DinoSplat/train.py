@@ -68,9 +68,9 @@ def training(
     progress_bar = tqdm(range(first_iter, opt.iterations), desc="Training progress")
     first_iter += 1
     for iteration in range(first_iter, opt.iterations + 1):
-        if network_gui.conn == None:
+        if network_gui.conn is None:
             network_gui.try_connect()
-        while network_gui.conn != None:
+        while network_gui.conn is not None:
             try:
                 net_image_bytes = None
                 (
@@ -81,7 +81,7 @@ def training(
                     keep_alive,
                     scaling_modifer,
                 ) = network_gui.receive()
-                if custom_cam != None:
+                if custom_cam is not None:
                     net_image = render(
                         custom_cam, gaussians, pipe, background, opt, scaling_modifer
                     )["render"]
@@ -98,7 +98,7 @@ def training(
                     (iteration < int(opt.iterations)) or not keep_alive
                 ):
                     break
-            except Exception as e:
+            except Exception:
                 network_gui.conn = None
 
         iter_start.record()
@@ -132,9 +132,11 @@ def training(
             #     language_feature_dir=dataset.lf_path,
             #     feature_level=dataset.feature_level,
             # )
-    
+
             # gt_language_feature = viewpoint_cam.get_dino_feature(dataset.source_path)
-            gt_language_feature = viewpoint_cam.get_talk2dino_feature(dataset.source_path)
+            gt_language_feature = viewpoint_cam.get_talk2dino_feature(
+                dataset.source_path
+            )
             Ll1 = l1_loss(
                 language_feature,
                 gt_language_feature,

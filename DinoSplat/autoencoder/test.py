@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import numpy as np
@@ -7,15 +6,14 @@ import torch
 from torchvision.transforms import functional as VF
 
 import argparse
-import shutil
-from tqdm import tqdm
 
 from dataset import AutoencoderDataset
 from model import Autoencoder
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-if __name__ == "__main__":
+
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset_path", type=str, required=True)
     parser.add_argument("--dataset_name", type=str, required=True)
@@ -57,7 +55,6 @@ if __name__ == "__main__":
     model.eval()
     model.to(device)
 
-    features = {}
     output_dir.mkdir(parents=True, exist_ok=True)
 
     with torch.no_grad():
@@ -74,3 +71,7 @@ if __name__ == "__main__":
             )
             save_path = output_dir / Path(path).name
             np.savez_compressed(save_path, output)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,20 +1,17 @@
 import os
 import random
 import argparse
-import sys
-from dataclasses import dataclass, field
-from typing import Tuple, Type
-from copy import deepcopy
+from typing import Iterable
+
 from pathlib import Path
 
 import numpy as np
-import torch
-from tqdm import tqdm
 import cv2
 
 import torch
-from torchvision import transforms
 from torch import nn
+from torchvision import transforms
+
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -26,8 +23,14 @@ image_transforms = transforms.Compose(
     ]
 )
 
+
 @torch.no_grad()
-def create(model, image_list, data_list, save_folder):
+def create(
+    model: nn.Module,
+    image_list: Iterable[torch.Tensor],
+    data_list: Iterable[str],
+    save_folder: str,
+):
     model.to(device)
     save_dir = Path(save_folder)
     for image, file_path in zip(image_list, data_list):
@@ -35,16 +38,17 @@ def create(model, image_list, data_list, save_folder):
         result = (
             model.forward_features(image)["x_norm_patchtokens"]
             .view(37, 37, -1)
-            .permute(2, 0, 1).cpu().numpy()
+            .permute(2, 0, 1)
+            .cpu()
+            .numpy()
         )
-        
+
         save_path = save_dir / f"{Path(file_path).stem}.npz"
-        
+
         np.savez_compressed(save_path, result)
 
 
-
-def seed_everything(seed_value):
+def seed_everything(seed_value: int):
     random.seed(seed_value)
     np.random.seed(seed_value)
     torch.manual_seed(seed_value)
@@ -57,7 +61,7 @@ def seed_everything(seed_value):
         torch.backends.cudnn.benchmark = True
 
 
-if __name__ == "__main__":
+def main():
     seed_num = 42
     seed_everything(seed_num)
 
@@ -75,12 +79,14 @@ if __name__ == "__main__":
     model = torch.hub.load("facebookresearch/dinov2", "dinov2_vitb14_reg")
 
     img_list = []
-    WARNED = False
     for data_path in data_list:
         image_path = os.path.join(img_folder, data_path)
+
         image = cv2.imread(image_path)
         image = torch.from_numpy(image).flip(dims=[-1])
+
         img_list.append(image)
+
     images = [img_list[i].permute(2, 0, 1)[None, ...] for i in range(len(img_list))]
     imgs = torch.cat(images)
 
@@ -88,3 +94,7 @@ if __name__ == "__main__":
     os.makedirs(save_folder, exist_ok=True)
 
     create(model, imgs, data_list, save_folder)
+
+
+if __name__ == "__main__":
+    main()

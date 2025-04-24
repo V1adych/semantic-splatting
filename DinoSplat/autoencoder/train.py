@@ -3,18 +3,14 @@ from statistics import mean
 
 import torch
 import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader
 
 from tqdm import tqdm
 from dataset import AutoencoderDataset
 from model import Autoencoder
 
 import argparse
-import logging
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
 
 torch.autograd.set_detect_anomaly(True)
 
@@ -27,7 +23,7 @@ def cos_loss(network_output, gt):
     return 1 - F.cosine_similarity(network_output, gt, dim=0).mean()
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset_path", type=str, required=True)
     parser.add_argument("--num_epochs", type=int, default=100)
@@ -76,7 +72,6 @@ if __name__ == "__main__":
     model = Autoencoder(encoder_hidden_dims, decoder_hidden_dims).to("cuda:0")
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-    logdir = f"ckpt/{args.dataset_name}"
 
     best_eval_loss = float("inf")
     best_epoch = 0
@@ -104,13 +99,13 @@ if __name__ == "__main__":
             optimizer.step()
 
         model.eval()
-        for idx, feature in enumerate(test_loader):
+        for feature in test_loader:
             data = feature.to("cuda:0")
             with torch.no_grad():
                 outputs = model(data)
             loss = l2_loss(outputs, data) + cos_loss(outputs, data) * 0.001
             test_losses.append(loss.item())
-      
+
         loop.set_postfix(
             {
                 "train_loss": mean(train_losses),
@@ -127,3 +122,7 @@ if __name__ == "__main__":
 
     print(f"best_epoch: {best_epoch}")
     print("best_loss: {:.8f}".format(best_eval_loss))
+
+
+if __name__ == "__main__":
+    main()
